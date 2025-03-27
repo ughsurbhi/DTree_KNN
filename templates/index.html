@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iris Flower Classifier</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: "Poppins", sans-serif;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        h2 {
+            margin-top: 50px;
+            font-size: 32px;
+        }
+
+        p {
+            font-size: 18px;
+        }
+
+        /* Form Container */
+        .container {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            width: 50%;
+            margin: auto;
+            border-radius: 12px;
+            box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Input Fields */
+        .input-group {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        input {
+            margin: 10px;
+            padding: 12px;
+            width: 40%;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Submit Button */
+        button {
+            padding: 12px 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: #ff8c00;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 15px;
+        }
+
+        button:hover {
+            background: #e07b00;
+        }
+
+        /* Result Box */
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            font-size: 20px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            width: 50%;
+            margin: auto;
+            display: none; /* Hidden until result is displayed */
+        }
+    </style>
+</head>
+<body>
+
+    <h2>🌸 Iris Flower Classifier 🌿</h2>
+    <p>Enter the flower measurements to predict its species:</p>
+
+    <div class="container">
+        <form id="iris-form">
+            <div class="input-group">
+                <input type="number" id="sepal_length" placeholder="Sepal Length (cm)" required>
+                <input type="number" id="sepal_width" placeholder="Sepal Width (cm)" required>
+                <input type="number" id="petal_length" placeholder="Petal Length (cm)" required>
+                <input type="number" id="petal_width" placeholder="Petal Width (cm)" required>
+            </div>
+            <button type="submit">🌟 Predict</button>
+        </form>
+    </div>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById("iris-form").addEventListener("submit", function(event) {
+            event.preventDefault(); // Prevent form reload
+            
+            let sepal_length = parseFloat(document.getElementById("sepal_length").value);
+            let sepal_width = parseFloat(document.getElementById("sepal_width").value);
+            let petal_length = parseFloat(document.getElementById("petal_length").value);
+            let petal_width = parseFloat(document.getElementById("petal_width").value);
+
+            let features = [sepal_length, sepal_width, petal_length, petal_width];
+
+            fetch("/predict", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ features: features })
+            })
+            .then(response => response.json())
+            .then(data => {
+                let resultDiv = document.getElementById("result");
+                resultDiv.style.display = "block"; // Show result box
+
+                resultDiv.innerHTML = `
+                    🌱 <b>Decision Tree Prediction:</b> ${data["Decision Tree Prediction"]} <br>
+                    🌼 <b>KNN Prediction:</b> ${data["KNN Prediction"]}
+                `;
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    </script>
+
+</body>
+</html>
